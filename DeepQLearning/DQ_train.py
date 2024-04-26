@@ -9,9 +9,26 @@ import pandas as pd
 import random
 import time
 import os
+from gymnasium import RewardWrapper
 random.seed(42)
 torch.manual_seed(42)
 
+class TranformReward(RewardWrapper):
+    def __init__(self, env: gym.Env, f):
+        super().__init__(env)
+        # self.reward_range = [0,2]
+        self.f = f
+        self.env = env
+
+    def reward(self, reward: np.float32) -> np.float32:
+        return self.f(env)
+
+
+def f(env):
+    state = env.state[0]
+    if -1 < state < 1 :
+        return 1
+    else: return -2
 
 class createNetwork(nn.Module):
     def __init__(self, states, actionSpace):
@@ -163,8 +180,8 @@ if __name__ == "__main__":
 
     # Explanation of every hyperparameter is in the docstirng of `DeepQLearning` class
     # Hyperparameter ##########
-    model_no = 5
-    numberEpisodes = 10000
+    model_no = 6
+    numberEpisodes = 1000
     model_name = 'CartPole-v1'
     gamma = 0.99
     epsilon = 1
@@ -188,4 +205,4 @@ if __name__ == "__main__":
     print(f'Time: {end - start}')
     torch.save(dqn.onlineNetwork.state_dict(), os.path.join('models', f'DQ_{model_no}.pt')) # Saving the model
     dqn.simulateStrategy()
-    dqn.plotRewards(model_no, avg_intv=400)
+    dqn.plotRewards(model_no, avg_intv=4)

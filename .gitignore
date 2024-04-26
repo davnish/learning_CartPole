@@ -3,3 +3,4 @@ dqn2.py
 basic2.py
 __pycache__
 .DS_store
+exp.py
